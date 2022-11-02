@@ -1,0 +1,20 @@
+kind: Kustomization
+
+resources:
+  - namespace.yaml
+  - db/persistent-volume.yaml
+  - db/persistent-volume-claim.yaml
+  - db/service.yaml
+  - db/deployment.yaml
+  - db/network-policy.yaml
+  - db/hscaling-memory-policy.yaml
+  - db/hscaling-cpu-policy.yaml
+  - web/service.yaml
+
+configMapGenerator:
+  - name: postgres-config
+    literals:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_HOST=wallet-db-service

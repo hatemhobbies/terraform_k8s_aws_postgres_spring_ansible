@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wallet-service
+spec:
+  selector:
+    matchLabels:
+      app: wallet-service
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: wallet-service
+    spec:
+      containers:
+        - name: wallet-service
+          # image: localhost:32000/wallet-service-dev:registry
+          image: wallet-service
+          ports:
+            - containerPort: 8080
+              name: "http"
+            - containerPort: 8443
+              name: "https"
+          volumeMounts:
+            - mountPath: "/app"
+              name: wallet-service-source-code-storage
+          env:
+            - name: POSTGRES_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: POSTGRES_HOST
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: POSTGRES_DB
+            - name: POSTGRES_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: POSTGRES_PASSWORD
+            - name: CUSTOMCONNSTR_VehicleQuotesContext
+              value: Host=$(VEHICLE_QUOTES_DB_SERVICE_SERVICE_HOST);Database=$(POSTGRES_DB);Username=$(POSTGRES_USER);Password=$(POSTGRES_PASSWORD)
+      volumes:
+        - name: wallet-service-source-code-storage
+          persistentVolumeClaim:
+            claimName: wallet-service-source-code-persisent-volume-claim

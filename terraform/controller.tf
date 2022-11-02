@@ -23,6 +23,16 @@ resource "aws_instance" "k8s_controller" {
     inline = ["echo 'Instance ${self.public_dns} is up!'"]
   }
 
+
+  provisioner "local-exec" {
+    command = <<EOT
+      scp -o StrictHostKeyChecking=no  -i ~/.ssh/k8s_rsa*   ~/.ssh/k8s_rsa ubuntu@${aws_instance.k8s_controller.public_ip}:/home/ubuntu/.ssh
+      scp -r -i ~/.ssh/k8s_rsa ../k8s  ubuntu@${aws_instance.k8s_controller.public_ip}:/home/ubuntu/k8s
+    EOT
+  }
+
+
+
   provisioner "local-exec" {
     command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -T 300 -i '${self.public_ip},' --extra-vars 'private_ip=${self.private_ip} hostname=${split(".", self.private_dns)[0]} public_ip=${self.public_ip}' --private-key ~/.ssh/k8s_rsa ../ansible/k8s_controller_playbook.yml"
   }

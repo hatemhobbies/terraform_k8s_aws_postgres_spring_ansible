@@ -1,0 +1,8 @@
+# k8s/dev/db/persistent-volume-host-path.yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: wallet-service-postgres-data-persisent-volume
+spec:
+  hostPath:
+    path: "/home/ubuntu/projects/easypay-postgres-data-dev"

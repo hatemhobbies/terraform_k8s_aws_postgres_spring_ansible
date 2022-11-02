@@ -1,0 +1,56 @@
+ apiVersion: apps/v1
+ kind: Deployment
+ metadata:
+   name: wallet-service-db
+ spec:
+   selector:
+     matchLabels:
+       app: wallet-service-db
+   replicas: 1
+   template:
+     metadata:
+       labels:
+         app: wallet-service-db
+     spec:
+       containers:
+         - name: wallet-service-db
+           image: postgres:14.1-alpine
+           ports:
+             - containerPort: 5432
+               name: "postgres"
+           volumeMounts:
+             - mountPath: "/var/lib/postgresql/data"
+               name: wallet-service-postgres-data-storage
+           env:
+             - name: POSTGRES_HOST
+               valueFrom:
+                 configMapKeyRef:
+                   name: postgres-config
+                   key: POSTGRES_HOST
+             - name: POSTGRES_DB
+               valueFrom:
+                 configMapKeyRef:
+                   name: postgres-config
+                   key: POSTGRES_DB
+             - name: POSTGRES_USER
+               valueFrom:
+                 configMapKeyRef:
+                   name: postgres-config
+                   key: POSTGRES_USER
+             - name: POSTGRES_PASSWORD
+               valueFrom:
+                 configMapKeyRef:
+                   name: postgres-config
+                   key: POSTGRES_PASSWORD
+           resources:
+             limits:
+               memory: "500Mi" # Maximum amount of ram in a container
+               cpu: 800m # Maximum amount of cpuin a container
+             requests:
+               memory: "100"    # minimum amount of ram available in a Pod
+               cpu: 300m   # minimum amount of cpu available in a Pod
+
+       volumes:
+         - name: wallet-service-postgres-data-storage
+           persistentVolumeClaim:
+             claimName: wallet-service-postgres-data-persisent-volume-claim

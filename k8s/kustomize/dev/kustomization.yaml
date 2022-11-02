@@ -1,0 +1,20 @@
+# k8s/dev/kustomization.yaml
+kind: Kustomization
+
+bases:
+  - ../base
+
+namespace: project
+
+resources:
+  - web/persistent-volume.yaml
+  - web/persistent-volume-claim.yaml
+  - web/deployment.yaml
+
+patches:
+  - db/persistent-volume-host-path.yaml
+
+images:
+  - name: wallet-service
+    newName: hatemhobbies/wallet-service-dev
+    newTag: "2.0"

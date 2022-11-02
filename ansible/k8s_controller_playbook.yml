@@ -127,6 +127,17 @@
     become: false
     command: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 
+# Setup metrics server
+# The file was changed to accommodate self sign certificate see lines 134-137
+  - name: Install customized metrics server
+    become: false
+    command: kubectl apply -f k8s/customized-metrics-server.yaml
+
+# Setup the easypay app
+  - name: Install custom easypay Spring Rest Data app
+    become: false
+    command: kubectl apply -k k8s/kustomize/dev
+
 # Generate join-command to add new nodes -- will be skipped for now
   - name: Generate join command
     command: kubeadm token create --print-join-command

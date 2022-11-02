@@ -1,0 +1,12 @@
+apiVersion: certificates.k8s.io/v1
+kind: CertificateSigningRequest
+metadata:
+  name: pod-admin
+spec:
+  groups:
+    - system:authenticated
+  # request: $(cat pod-admin.csr | base64 | tr -d '\n')
+  request: __CSR___
+  usages:
+  - client auth
+  signerName: kubernetes.io/kube-apiserver-client

@@ -1,7 +1,7 @@
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: wallet-service-db
+  name: wallet-service-db-cpu-scaler
   namespace: project  
 spec:
   maxReplicas: 4 # maximum replicas of pods
